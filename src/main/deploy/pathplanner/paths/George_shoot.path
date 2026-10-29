@@ -1,0 +1,59 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.5341399762752084,
+        "y": 0.6619928825622776
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.3918764471771221,
+        "y": 1.2110099953848783
+      },
+      "isLocked": false,
+      "linkedName": "g_HP_end"
+    },
+    {
+      "anchor": {
+        "x": 2.8,
+        "y": 2.17061111111111
+      },
+      "prevControl": {
+        "x": 1.9487505651557728,
+        "y": 1.3966351940723816
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "e_george_shoot"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7406749555950279,
+      "rotationDegrees": 178.5932793433984
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 6.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 180.0,
+    "maxAngularAcceleration": 180.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 47.54480437981308
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
