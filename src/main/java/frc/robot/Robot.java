@@ -12,17 +12,18 @@ import org.wpilib.math.linalg.VecBuilder;
 import org.wpilib.math.geometry.Rotation2d;
 // import org.wpilib.math.geometry.Rotation2d;
 // import org.wpilib.math.util.Units;
-import org.wpilib.util.sendable.Sendable;
-import org.wpilib.util.sendable.SendableBuilder;
+//import org.wpilib.util.sendable.Sendable;
+import org.wpilib.tunable.Tunables;
+//import org.wpilib.util.sendable.SendableBuilder;
 import org.wpilib.driverstation.MatchState;
 import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.Alliance;
 import org.wpilib.framework.TimedRobot;
 import org.wpilib.smartdashboard.Field2d;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.telemetry.TelemetryTable;
 // import org.wpilib.math.geometry.Pose2d;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
@@ -54,6 +55,9 @@ public class Robot extends TimedRobot {
   boolean trenchHazard;
   public static boolean perspectiveSet;
 
+  private final TelemetryTable m_driveTelemetry =
+    Telemetry.getTable("Drive");
+
   public Robot() {
     m_robotContainer = new RobotContainer();
   }
@@ -67,7 +71,7 @@ public class Robot extends TimedRobot {
   @Override // PHX6ex DOESN'T HAVE A ROBOT INIT?
   public void robotInit() {
     CameraServer.startAutomaticCapture();
-    SmartDashboard.putData("Field", ourfield);
+    Tunables.publish("Field", ourfield);
     perspectiveSet=false;
     m_robotContainer.m_robotDrive.getPigeon2().reset();
 /*     alliance = MatchState.getAlliance();
@@ -80,16 +84,16 @@ public class Robot extends TimedRobot {
     }  */
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     LimelightHelpers.SetIMUMode(Constants.kLimelightName, 1);
-    SmartDashboard.putData(
-        "Swerve Drive",
-        new Sendable() {
-          @Override
-          public void initSendable(SendableBuilder builder) {
+    /*  void initSendable(SendableBuilder builder) {
             builder.setSmartDashboardType("SwerveDrive");
 
             builder.addDoubleProperty(
                 "Front Left Angle",
-                () -> m_robotContainer.m_robotDrive.getState().ModuleStates[0].angle.getRadians(),
+                () ->SmartDashboard.putData(
+        "Swerve Drive",
+        new Sendable() {
+          @Override
+          public m_robotContainer.m_robotDrive.getState().ModuleStates[0].angle.getRadians(),
                 null);
             builder.addDoubleProperty(
                 "Front Left Velocity",
@@ -127,8 +131,8 @@ public class Robot extends TimedRobot {
                 "Robot Angle",
                 () -> m_robotContainer.m_robotDrive.getState().Pose.getRotation().getRadians(),
                 null);
-          }
-        });
+          } */
+        
     trenchTags.add(7.0);
     trenchTags.add(6.0);
     trenchTags.add(12.0);
@@ -205,15 +209,15 @@ public class Robot extends TimedRobot {
       perspectiveSet=true;
     }
 
-    SmartDashboard.putString("Choice", m_autonomousCommand.toString());
+    Telemetry.log("Choice", m_autonomousCommand.toString());
 /*     if (myLimelightPose != null) {
        SmartDashboard.putNumber("Tag Count", myLimelightPose.tagCount);
     } */
-    SmartDashboard.putNumber(
+    Telemetry.log(
         "Pigeonyaw", m_robotContainer.m_robotDrive.getState().RawHeading.getDegrees());
-    SmartDashboard.putNumber(
+    Telemetry.log(
         "pigeon2 yaw", Math.floorMod((int) getPigeon().getYaw().getValueAsDouble(), 360));
-    SmartDashboard.putBoolean("trenchHazard", !trenchHazard);
+    Telemetry.log("trenchHazard", !trenchHazard);
     // SmartDashboard.putNumber("Distance", distance);
     // SmartDashboard.putNumber("omegaRPS", Math.abs(omegaRPS));
     // SmartDashboard.putNumber("Robotx", m_robotContainer.m_robotDrive.getState().Pose.getX());
@@ -241,8 +245,8 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule(); // MEE PHX6ex has
-      // CommandScheduler.getInstance().schdeuld(m_autonomousCommand)
+      //m_autonomousCommand.schedule(); // MEE PHX6ex has
+       CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
     LimelightHelpers.SetIMUMode(Constants.kLimelightName, 4);
     //Adding here as well.  Thought is that mayeb robot init doesn't have driver station access.

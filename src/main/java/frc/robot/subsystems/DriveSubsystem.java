@@ -23,7 +23,6 @@ import org.wpilib.driverstation.RobotState;
 import org.wpilib.driverstation.Alliance;
 import org.wpilib.driverstation.MatchType;
 import org.wpilib.driverstation.DriverStationErrors;
-import org.wpilib.driverstation.Alliance;
 import org.wpilib.system.Notifier;
 import org.wpilib.system.RobotController;
 import org.wpilib.command2.Command;
@@ -42,7 +41,7 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   private double m_lastSimTime;
 
   /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
+  private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.ZERO;
   /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
@@ -56,8 +55,8 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
 
-  private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
-      new SwerveRequest.ApplyRobotSpeeds();
+  private final SwerveRequest.ApplyRobotVelocity m_pathApplyRobotVelocity =
+      new SwerveRequest.ApplyRobotVelocity();
 
   private final Pigeon2 m_pigeon2 = getPigeon2();
   /* SysId routine for characterizing translation. This is used to find PID gains for the drive motors. */
@@ -224,11 +223,11 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
       AutoBuilder.configure(
           () -> getState().Pose, // Supplier of current robot pose
           this::resetPose, // Consumer for seeding pose against auto
-          () -> getState().Speeds, // Supplier of current robot speeds
+          () -> getState().Velocity, // Supplier of current robot speeds
           // Consumer of ChassisVelocities and feedforwards to drive the robot
           (speeds, feedforwards) ->
               setControl(
-                  m_pathApplyRobotSpeeds
+                  m_pathApplyRobotVelocity
                       .withSpeeds(ChassisVelocities.discretize(speeds, 0.020))
                       .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                       .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
