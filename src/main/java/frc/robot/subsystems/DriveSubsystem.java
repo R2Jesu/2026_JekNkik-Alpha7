@@ -216,7 +216,7 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutineToApply.dynamic(direction);
   }
-
+// pathplanner
   private void configureAutoBuilder() {
     try {
       var config = RobotConfig.fromGUISettings();
@@ -228,7 +228,7 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
           (speeds, feedforwards) ->
               setControl(
                   m_pathApplyRobotVelocity
-                      .withSpeeds(ChassisVelocities.discretize(speeds, 0.020))
+                      .withVelocity(speeds) // TODO: may need test or further revision
                       .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                       .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
           new PPHolonomicDriveController(
@@ -260,7 +260,7 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
       MatchState.getAlliance()
           .ifPresent(
               allianceColor -> {
-                setOperatorPerspectiveForward(
+                setOperatorForwardDirection(
                     allianceColor == Alliance.RED
                         ? kRedAlliancePerspectiveRotation
                         : kBlueAlliancePerspectiveRotation);
@@ -295,7 +295,7 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
    */
   @Override
   public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-    super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
   }
 
   /**
@@ -317,7 +317,7 @@ public class DriveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
       double timestampSeconds,
       Matrix<N3, N1> visionMeasurementStdDevs) {
     super.addVisionMeasurement(
-        visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+        visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
   }
 
   // returns the turn rate of the robot in degrees per second, used for vision odometry correction

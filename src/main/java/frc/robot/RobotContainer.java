@@ -13,8 +13,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 import org.wpilib.math.filter.SlewRateLimiter;
 import org.wpilib.math.util.MathUtil;
-import org.wpilib.smartdashboard.SendableChooser;
-import org.wpilib.smartdashboard.SmartDashboard;
 import org.wpilib.command2.Command;
 import org.wpilib.command2.CommandScheduler;
 import org.wpilib.command2.Commands;
@@ -32,6 +30,11 @@ import frc.robot.subsystems.DriveSubsystem;
 //import frc.robot.subsystems.R2Jesu_ClimberSubsystem;
 import frc.robot.subsystems.R2Jesu_IntakeSubsystem;
 import frc.robot.subsystems.R2Jesu_ShooterSubsystem;
+
+import org.wpilib.tunable.Selectable;
+import org.wpilib.tunable.Tunables;
+import org.wpilib.telemetry.Telemetry;
+import org.wpilib.telemetry.TelemetryTable;
 
 public class RobotContainer {
   private double MaxSpeed =
@@ -55,9 +58,10 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-  private final SendableChooser<Command> autoChooser;
+  private final Selectable<Command> autoChooser;
 
-  private final Telemetry logger = new Telemetry(MaxSpeed);
+
+  private final SwerveTelemetry logger = new SwerveTelemetry(MaxSpeed);
 
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final CommandXboxController joystick2 = new CommandXboxController(1);
@@ -76,7 +80,8 @@ public class RobotContainer {
   public RobotContainer() {
     registerAutoCommands();
     autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    Tunables.publish("Auto Mode", autoChooser);
+    // SmartDashboard.putData("Auto Chooser", autoChooser);
     configureBindings();
 
     // MEE ADDED Warmup PathPlanner to avoid Java pauses
@@ -177,18 +182,18 @@ public class RobotContainer {
         .leftTrigger()
         .whileTrue(
             new R2Jesu_ShooterModeShootWithLimelight(m_shooterSubsystem, m_robotDrive, joystick));
-    joystick.button(3).whileTrue(new R2Jesu_ThrowCommand(m_shooterSubsystem));
+    joystick.x().whileTrue(new R2Jesu_ThrowCommand(m_shooterSubsystem));
 
     joystick2
-        .button(1)
+        .a()
         .onTrue(
             new ConditionalCommand(
                 AutoBuilder.pathfindToPose(Constants.kLeftHang, Constants.teleopConstraints),
                 AutoBuilder.pathfindToPose(Constants.kRightHang, Constants.teleopConstraints),
                 () -> m_robotDrive.getState().Pose.getY() < 2.94));
 
-    joystick.button(1).onTrue(new R2Jesu_LowerIntakeCommand(m_intakeSubsystem));
-    joystick.button(2).onTrue(new R2Jesu_RaiseIntakeCommand(m_intakeSubsystem));
+    joystick.a().onTrue(new R2Jesu_LowerIntakeCommand(m_intakeSubsystem));
+    joystick.b().onTrue(new R2Jesu_RaiseIntakeCommand(m_intakeSubsystem));
 
     //joystick2.button(4).onTrue(new R2Jesu_ClimbRaiseHandCommand(m_climberSubsystem));
     // joystick button 1 is red, 2 is green, 3 is blue, 4 is yellow

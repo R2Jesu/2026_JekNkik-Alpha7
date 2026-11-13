@@ -203,7 +203,7 @@ public class Robot extends TimedRobot {
     alliance = MatchState.getAlliance();
     if (alliance.get() == Alliance.RED && !perspectiveSet) {
       perspectiveSet=true;
-      m_robotContainer.m_robotDrive.setOperatorPerspectiveForward(Rotation2d.fromDegrees(180));
+      m_robotContainer.m_robotDrive.setOperatorForwardDirection(Rotation2d.fromDegrees(180));
     }
     else {
       perspectiveSet=true;

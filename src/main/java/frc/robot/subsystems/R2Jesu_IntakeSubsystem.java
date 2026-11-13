@@ -8,7 +8,7 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
-import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkLowLevel.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -17,17 +17,18 @@ import org.wpilib.math.controller.PIDController;
 import org.wpilib.networktables.GenericEntry;
 import org.wpilib.hardware.discrete.CounterBase;
 import org.wpilib.hardware.rotation.Encoder;
-import org.wpilib.shuffleboard.BuiltInWidgets;
+/* import org.wpilib.shuffleboard.BuiltInWidgets;
 import org.wpilib.shuffleboard.Shuffleboard;
-import org.wpilib.smartdashboard.SmartDashboard;
+import org.wpilib.smartdashboard.SmartDashboard; */
 import org.wpilib.command2.Command;
 import org.wpilib.command2.SubsystemBase;
 import java.util.Map;
+import org.wpilib.hardware.bus.CANPort;
 
 public class R2Jesu_IntakeSubsystem extends SubsystemBase {
 
-  private SparkMax intake_armMotor = new SparkMax(51, MotorType.kBrushless);
-  private SparkMax intake_wheelsMotor = new SparkMax(54, MotorType.kBrushless);
+  private SparkMax intake_armMotor = new SparkMax(CANPort.CAN_D0, 51, MotorType.kBrushless); // TODO: canport device id and motor type
+  private SparkMax intake_wheelsMotor = new SparkMax(CANPort.CAN_D0, 54, MotorType.kBrushless);
   private Encoder intake_armEncoder = new Encoder(0, 1, true, CounterBase.EncodingType.k4X);
 
   // use the revrobotics encoder in a closed loop for the wheels
